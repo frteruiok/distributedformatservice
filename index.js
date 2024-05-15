@@ -1,26 +1,30 @@
-const mergeSortIterative = (arr) => {
-  const merge = (left, right) => {
-    let result = [];
-    let leftIndex = 0;
-    let rightIndex = 0;
-    while (leftIndex < left.length && rightIndex < right.length) {
-      if (left[leftIndex] < right[rightIndex]) {
-        result.push(left[leftIndex]);
-        leftIndex++;
-      } else {
-        result.push(right[rightIndex]);
-        rightIndex++;
-      }
+function maximalRectangle(matrix) {
+  if (matrix.length === 0 || matrix[0].length === 0) return 0;
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  const heights = new Array(cols).fill(0);
+  let maxArea = 0;
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      heights[j] = matrix[i][j] === "1" ? heights[j] + 1 : 0;
     }
-    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-  };
-  const mergeSize = 2;
-  for (let i = 0; i < arr.length; i += mergeSize) {
-    for (let j = i; j < arr.length; j += mergeSize) {
-      const left = arr.slice(j, j + mergeSize / 2);
-      const right = arr.slice(j + mergeSize / 2, j + mergeSize);
-      arr.splice(j, mergeSize, ...merge(left, right));
-    }
+    maxArea = Math.max(maxArea, largestRectangleArea(heights));
   }
-  return arr;
-};
+  return maxArea;
+  function largestRectangleArea(heights) {
+    const stack = [];
+    let maxArea = 0;
+    for (let i = 0; i <= heights.length; i++) {
+      while (
+        stack.length &&
+        (i === heights.length || heights[i] < heights[stack[stack.length - 1]])
+      ) {
+        const height = heights[stack.pop()];
+        const width = stack.length === 0 ? i : i - stack[stack.length - 1] - 1;
+        maxArea = Math.max(maxArea, height * width);
+      }
+      stack.push(i);
+    }
+    return maxArea;
+  }
+}
